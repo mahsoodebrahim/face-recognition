@@ -5,6 +5,7 @@ import Navigation from "./components/Navigation";
 import Logo from "./components/Logo/Logo";
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import Rank from "./components/Rank/Rank";
+import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
 import Clarifai from "clarifai";
 
 //You must add your own API key here from Clarifai.
@@ -16,11 +17,9 @@ function App() {
   const [url, setUrl] = useState("a test");
   function onSubmit() {
     console.log("clicked");
+    // 31025e019a18970a1acc55ba6a184dc6
     app.models
-      .predict(
-        "31025e019a18970a1acc55ba6a184dc6",
-        "https://samples.clarifai.com/dog2.jpeg"
-      )
+      .predict(Clarifai.COLOR_MODEL, "https://samples.clarifai.com/dog2.jpeg")
       .then((response) => {
         console.log("hi", response);
       });
@@ -33,7 +32,7 @@ function App() {
       <Logo />
       <Rank />
       <ImageLinkForm url={url} setUrl={setUrl} onSubmit={onSubmit} />
-      {/* <FaceRecognition /> */}
+      <FaceRecognition />
     </div>
   );
 }
