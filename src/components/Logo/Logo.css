@@ -1,0 +1,14 @@
+.tilt {
+  background: linear-gradient(to bottom right, #ff5edf 33%, #04c8db 100%);
+}
+
+.centerImg {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+.logo {
+  border-radius: 25%;
+}
