@@ -10,19 +10,23 @@ import Clarifai from "clarifai";
 
 //You must add your own API key here from Clarifai.
 const app = new Clarifai.App({
-  apiKey: "YOUR API KEY HERE",
+  apiKey: "6eeb3aa9a5504ead9e7280d680dc3224",
 });
 
 function App() {
-  const [url, setUrl] = useState("a test");
+  // https://samples.clarifai.com/dog2.jpeg
+  const [url, setUrl] = useState("");
+  const [imageToDetect, setImageToDetect] = useState("");
   function onSubmit() {
     console.log("clicked");
+    setImageToDetect(url);
     // 31025e019a18970a1acc55ba6a184dc6
-    app.models
-      .predict(Clarifai.COLOR_MODEL, "https://samples.clarifai.com/dog2.jpeg")
-      .then((response) => {
-        console.log("hi", response);
-      });
+    app.models.predict(Clarifai.FACE_DETECT_MODEL, url).then((response) => {
+      console.log(
+        "hi",
+        response.outputs[0].data.regions[0].region_info.bounding_box
+      );
+    });
   }
 
   return (
@@ -32,7 +36,7 @@ function App() {
       <Logo />
       <Rank />
       <ImageLinkForm url={url} setUrl={setUrl} onSubmit={onSubmit} />
-      <FaceRecognition />
+      <FaceRecognition imageToDetect={imageToDetect} />
     </div>
   );
 }

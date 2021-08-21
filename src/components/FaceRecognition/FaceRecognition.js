@@ -1,9 +1,17 @@
 import React from "react";
 
-function FaceRecognition() {
+function FaceRecognition({ imageToDetect }) {
   return (
     <div className="center">
-      <img src="https://samples.clarifai.com/dog2.jpeg" alt="input image url" />
+      {imageToDetect ? (
+        <img
+          src={imageToDetect}
+          alt=""
+          width="500px"
+          height="auto"
+          className="mv4"
+        />
+      ) : null}
     </div>
   );
 }
