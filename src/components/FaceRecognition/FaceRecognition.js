@@ -1,8 +1,7 @@
 import React from "react";
 import "./FaceRecognition.css";
 
-function FaceRecognition({ imageToDetect, faceBorderBox }) {
-  console.log("faceborderbod", faceBorderBox);
+function FaceRecognition({ imageToDetect, faceBorderBoxes }) {
   return (
     <div className="center ma">
       <div className="absolute mt2">
@@ -13,17 +12,20 @@ function FaceRecognition({ imageToDetect, faceBorderBox }) {
           width="500px"
           height="auto"
         />
-        {faceBorderBox ? (
-          <div
-            className="bounding-box"
-            style={{
-              top: faceBorderBox.topRow,
-              right: faceBorderBox.rightCol,
-              left: faceBorderBox.leftCol,
-              bottom: faceBorderBox.bottomRow,
-            }}
-          ></div>
-        ) : null}
+        {faceBorderBoxes
+          ? faceBorderBoxes.map((borderBox) => (
+              <div
+                key={borderBox.id}
+                className="bounding-box"
+                style={{
+                  top: borderBox.topRow,
+                  right: borderBox.rightCol,
+                  left: borderBox.leftCol,
+                  bottom: borderBox.bottomRow,
+                }}
+              />
+            ))
+          : null}
       </div>
     </div>
   );

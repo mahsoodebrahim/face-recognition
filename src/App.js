@@ -16,40 +16,36 @@ const app = new Clarifai.App({
 function App() {
   const [url, setUrl] = useState("");
   const [imageToDetect, setImageToDetect] = useState("");
-  const [faceBorderBox, setFaceBorderBox] = useState(null);
+  const [faceBorderBoxes, setFaceBorderBoxes] = useState([]);
 
-  function calculateFaceCoordinates(boundingBox) {
+  function calculateFaceCoordinates(response) {
     const image = document.getElementById("image");
     const imageWidth = image.width;
     const imageHeight = image.height;
-    console.log("width:", imageWidth, "height", imageHeight);
-    const coordinates = {
-      leftCol: boundingBox.left_col * imageWidth,
-      rightCol: imageWidth - boundingBox.right_col * imageWidth,
-      topRow: boundingBox.top_row * imageHeight,
-      bottomRow: imageHeight - boundingBox.bottom_row * imageHeight,
-    };
-    setFaceBorderBox(coordinates);
+
+    return response.outputs[0].data.regions.map((region) => {
+      const boundingBox = region.region_info.bounding_box;
+      return {
+        leftCol: boundingBox.left_col * imageWidth,
+        rightCol: imageWidth - boundingBox.right_col * imageWidth,
+        topRow: boundingBox.top_row * imageHeight,
+        bottomRow: imageHeight - boundingBox.bottom_row * imageHeight,
+        id: region.id,
+      };
+    });
   }
 
-  // function drawFacialBorderBox(coordinates) {
-  //   console.log(coordinates);
-  //   setFaceBorderBox(coordinates);
-  // }
+  function drawFacialBorderBox(boundingBoxes) {
+    setFaceBorderBoxes(boundingBoxes);
+  }
 
   function onSubmit() {
-    console.log("clicked");
-    setImageToDetect(url);
+    setFaceBorderBoxes([]); // reset all the boundary boxes
+    setImageToDetect(url); // set image url as image to detect for the FaceRecognition component
     app.models
       .predict(Clarifai.FACE_DETECT_MODEL, url)
       .then((response) => {
-        console.log(
-          response.outputs[0].data.regions[0].region_info.bounding_box
-          // response
-        );
-        calculateFaceCoordinates(
-          response.outputs[0].data.regions[0].region_info.bounding_box
-        );
+        drawFacialBorderBox(calculateFaceCoordinates(response));
       })
       .catch((err) => console.log(err));
   }
@@ -63,7 +59,7 @@ function App() {
       <ImageLinkForm url={url} setUrl={setUrl} onSubmit={onSubmit} />
       <FaceRecognition
         imageToDetect={imageToDetect}
-        faceBorderBox={faceBorderBox}
+        faceBorderBoxes={faceBorderBoxes}
       />
     </div>
   );
@@ -72,7 +68,7 @@ function App() {
 const particleOptions = {
   particles: {
     number: {
-      value: 275,
+      value: 150,
       density: {
         enable: true,
         value_area: 1900,
