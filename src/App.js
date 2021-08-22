@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Particles from "react-particles-js";
 import "./App.css";
 import Navigation from "./components/Navigation";
+import SignIn from "./components/SignIn/SignIn";
 import Logo from "./components/Logo/Logo";
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import Rank from "./components/Rank/Rank";
@@ -17,6 +18,7 @@ function App() {
   const [url, setUrl] = useState("");
   const [imageToDetect, setImageToDetect] = useState("");
   const [faceBorderBoxes, setFaceBorderBoxes] = useState([]);
+  const [route, setRoute] = useState("signin");
 
   function calculateFaceCoordinates(response) {
     const image = document.getElementById("image");
@@ -54,13 +56,19 @@ function App() {
     <div className="App">
       <Particles className="particles" params={particleOptions} />
       <Navigation />
-      <Logo />
-      <Rank />
-      <ImageLinkForm url={url} setUrl={setUrl} onSubmit={onSubmit} />
-      <FaceRecognition
-        imageToDetect={imageToDetect}
-        faceBorderBoxes={faceBorderBoxes}
-      />
+      {route === "signin" ? (
+        <SignIn />
+      ) : (
+        <>
+          <Logo />
+          <Rank />
+          <ImageLinkForm url={url} setUrl={setUrl} onSubmit={onSubmit} />
+          <FaceRecognition
+            imageToDetect={imageToDetect}
+            faceBorderBoxes={faceBorderBoxes}
+          />
+        </>
+      )}
     </div>
   );
 }
