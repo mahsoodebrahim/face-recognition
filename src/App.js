@@ -14,19 +14,44 @@ const app = new Clarifai.App({
 });
 
 function App() {
-  // https://samples.clarifai.com/dog2.jpeg
   const [url, setUrl] = useState("");
   const [imageToDetect, setImageToDetect] = useState("");
+  const [faceBorderBox, setFaceBorderBox] = useState(null);
+
+  function calculateFaceCoordinates(boundingBox) {
+    const image = document.getElementById("image");
+    const imageWidth = image.width;
+    const imageHeight = image.height;
+    console.log("width:", imageWidth, "height", imageHeight);
+    const coordinates = {
+      leftCol: boundingBox.left_col * imageWidth,
+      rightCol: imageWidth - boundingBox.right_col * imageWidth,
+      topRow: boundingBox.top_row * imageHeight,
+      bottomRow: imageHeight - boundingBox.bottom_row * imageHeight,
+    };
+    setFaceBorderBox(coordinates);
+  }
+
+  // function drawFacialBorderBox(coordinates) {
+  //   console.log(coordinates);
+  //   setFaceBorderBox(coordinates);
+  // }
+
   function onSubmit() {
     console.log("clicked");
     setImageToDetect(url);
-    // 31025e019a18970a1acc55ba6a184dc6
-    app.models.predict(Clarifai.FACE_DETECT_MODEL, url).then((response) => {
-      console.log(
-        "hi",
-        response.outputs[0].data.regions[0].region_info.bounding_box
-      );
-    });
+    app.models
+      .predict(Clarifai.FACE_DETECT_MODEL, url)
+      .then((response) => {
+        console.log(
+          response.outputs[0].data.regions[0].region_info.bounding_box
+          // response
+        );
+        calculateFaceCoordinates(
+          response.outputs[0].data.regions[0].region_info.bounding_box
+        );
+      })
+      .catch((err) => console.log(err));
   }
 
   return (
@@ -36,7 +61,10 @@ function App() {
       <Logo />
       <Rank />
       <ImageLinkForm url={url} setUrl={setUrl} onSubmit={onSubmit} />
-      <FaceRecognition imageToDetect={imageToDetect} />
+      <FaceRecognition
+        imageToDetect={imageToDetect}
+        faceBorderBox={faceBorderBox}
+      />
     </div>
   );
 }
