@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 
 function Register({ onRouteChange }) {
+  const [name, setName] = useState("");
+
   return (
     <article className="br3 ba b--black-10 mv4 w-100 w-50-m w-40-l mw8 center  shadow-5">
       <main className="pa4 black-80">

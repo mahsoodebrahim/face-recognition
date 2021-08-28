@@ -13,9 +13,11 @@ function SignIn({ onRouteChange }) {
       body: JSON.stringify({ email: signInEmail, password: signInPassword }),
     })
       .then((response) => response.json())
-      .then((data) => console.log(data));
-
-    onRouteChange("Home");
+      .then((data) => {
+        if (data === "success") {
+          onRouteChange("Home");
+        }
+      });
   };
 
   return (
