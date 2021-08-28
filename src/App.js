@@ -12,7 +12,7 @@ import Clarifai from "clarifai";
 
 //You must add your own API key here from Clarifai.
 const app = new Clarifai.App({
-  apiKey: "6eeb3aa9a5504ead9e7280d680dc3224",
+  apiKey: "fbd8583e4a0945ac9ab52c8fbf7018f0",
 });
 
 function App() {
@@ -21,6 +21,23 @@ function App() {
   const [faceBorderBoxes, setFaceBorderBoxes] = useState([]);
   const [route, setRoute] = useState("SignIn");
   const [isSignedIn, setIsSignedIn] = useState(false);
+  const [user, setUser] = useState({
+    id: "",
+    name: "",
+    email: "",
+    entries: 0,
+    joined: "",
+  });
+
+  function loadUser(data) {
+    setUser({
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      entries: data.entries,
+      joined: data.joined,
+    });
+  }
 
   function calculateFaceCoordinates(response) {
     const image = document.getElementById("image");
@@ -43,12 +60,26 @@ function App() {
     setFaceBorderBoxes(boundingBoxes);
   }
 
-  function onSubmit() {
+  function onPictureSubmit() {
     setFaceBorderBoxes([]); // reset all the boundary boxes
     setImageToDetect(url); // set image url as image to detect for the FaceRecognition component
     app.models
       .predict(Clarifai.FACE_DETECT_MODEL, url)
       .then((response) => {
+        fetch("http://localhost:3000/image", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: user.id,
+          }),
+        })
+          .then((response) => response.json())
+          .then((userEntriesCount) => {
+            loadUser({ ...user, entries: userEntriesCount });
+          });
+
         drawFacialBorderBox(calculateFaceCoordinates(response));
       })
       .catch((err) => console.log(err));
@@ -66,17 +97,21 @@ function App() {
       {route === "Home" ? (
         <>
           <Logo />
-          <Rank />
-          <ImageLinkForm url={url} setUrl={setUrl} onSubmit={onSubmit} />
+          <Rank userName={user.name} userEntries={user.entries} />
+          <ImageLinkForm
+            url={url}
+            setUrl={setUrl}
+            onPictureSubmit={onPictureSubmit}
+          />
           <FaceRecognition
             imageToDetect={imageToDetect}
             faceBorderBoxes={faceBorderBoxes}
           />
         </>
       ) : route === "SignIn" ? (
-        <SignIn onRouteChange={onRouteChange} />
+        <SignIn onRouteChange={onRouteChange} loadUser={loadUser} />
       ) : (
-        <Register onRouteChange={onRouteChange} />
+        <Register onRouteChange={onRouteChange} loadUser={loadUser} />
       )}
     </div>
   );
