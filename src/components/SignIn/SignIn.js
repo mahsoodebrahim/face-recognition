@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
-function SignIn({ onRouteChange }) {
-  const [signInEmail, setSignInEmail] = useState("");
-  const [signInPassword, setSignInPassword] = useState("");
+function SignIn({ onRouteChange, loadUser }) {
+  const [signInEmail, setSignInEmail] = useState("john@gmail.com");
+  const [signInPassword, setSignInPassword] = useState("cookies");
 
   const onSignInSubmit = () => {
     fetch("http://localhost:3000/signin", {
@@ -13,8 +13,9 @@ function SignIn({ onRouteChange }) {
       body: JSON.stringify({ email: signInEmail, password: signInPassword }),
     })
       .then((response) => response.json())
-      .then((data) => {
-        if (data === "success") {
+      .then((user) => {
+        if (user.id) {
+          loadUser(user);
           onRouteChange("Home");
         }
       });
