@@ -1,7 +1,30 @@
 import React, { useState } from "react";
 
-function Register({ onRouteChange }) {
-  const [name, setName] = useState("");
+function Register({ onRouteChange, loadUser }) {
+  const [registerName, setRegisterName] = useState("");
+  const [registerEmail, setRegisterEmail] = useState("");
+  const [registerPassword, setRegisterPassword] = useState("");
+
+  const onRegisterSubmit = () => {
+    fetch("http://localhost:3000/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: registerName,
+        email: registerEmail,
+        password: registerPassword,
+      }),
+    })
+      .then((response) => response.json())
+      .then((user) => {
+        if (user) {
+          loadUser(user);
+          onRouteChange("Home");
+        }
+      });
+  };
 
   return (
     <article className="br3 ba b--black-10 mv4 w-100 w-50-m w-40-l mw8 center  shadow-5">
@@ -14,6 +37,7 @@ function Register({ onRouteChange }) {
                 Name
               </label>
               <input
+                onChange={(event) => setRegisterName(event.target.value)}
                 className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
                 type="text"
                 name="name-address"
@@ -25,6 +49,7 @@ function Register({ onRouteChange }) {
                 Email
               </label>
               <input
+                onChange={(event) => setRegisterEmail(event.target.value)}
                 className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
                 type="email"
                 name="email-address"
@@ -36,6 +61,7 @@ function Register({ onRouteChange }) {
                 Password
               </label>
               <input
+                onChange={(event) => setRegisterPassword(event.target.value)}
                 className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
                 type="password"
                 name="password"
@@ -46,7 +72,7 @@ function Register({ onRouteChange }) {
           </fieldset>
           <div className="">
             <input
-              onClick={() => onRouteChange("Home")}
+              onClick={() => onRegisterSubmit()}
               className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib"
               type="submit"
               value="Register & Sign In"
