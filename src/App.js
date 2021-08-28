@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import Particles from "react-particles-js";
 import "./App.css";
-import Navigation from "./components/Navigation";
+import Navigation from "./components/Navigation/Navigation";
 import SignIn from "./components/SignIn/SignIn";
+import Register from "./components/Register/Register";
 import Logo from "./components/Logo/Logo";
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import Rank from "./components/Rank/Rank";
@@ -18,7 +19,8 @@ function App() {
   const [url, setUrl] = useState("");
   const [imageToDetect, setImageToDetect] = useState("");
   const [faceBorderBoxes, setFaceBorderBoxes] = useState([]);
-  const [route, setRoute] = useState("signin");
+  const [route, setRoute] = useState("SignIn");
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
   function calculateFaceCoordinates(response) {
     const image = document.getElementById("image");
@@ -52,13 +54,16 @@ function App() {
       .catch((err) => console.log(err));
   }
 
+  function onRouteChange(navigationRoute) {
+    setRoute(navigationRoute);
+    navigationRoute === "Home" ? setIsSignedIn(true) : setIsSignedIn(false);
+  }
+
   return (
     <div className="App">
       <Particles className="particles" params={particleOptions} />
-      <Navigation />
-      {route === "signin" ? (
-        <SignIn />
-      ) : (
+      <Navigation onRouteChange={onRouteChange} isSignedIn={isSignedIn} />
+      {route === "Home" ? (
         <>
           <Logo />
           <Rank />
@@ -68,6 +73,10 @@ function App() {
             faceBorderBoxes={faceBorderBoxes}
           />
         </>
+      ) : route === "SignIn" ? (
+        <SignIn onRouteChange={onRouteChange} />
+      ) : (
+        <Register onRouteChange={onRouteChange} />
       )}
     </div>
   );
@@ -76,7 +85,7 @@ function App() {
 const particleOptions = {
   particles: {
     number: {
-      value: 150,
+      value: 100,
       density: {
         enable: true,
         value_area: 1900,
@@ -151,7 +160,7 @@ const particleOptions = {
       },
       onclick: {
         enable: true,
-        mode: "push",
+        mode: "remove",
       },
       resize: true,
     },
