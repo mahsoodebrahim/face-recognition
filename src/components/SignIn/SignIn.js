@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 
 function SignIn({ onRouteChange, loadUser }) {
-  const [signInEmail, setSignInEmail] = useState("john@gmail.com");
-  const [signInPassword, setSignInPassword] = useState("cookies");
+  const [signInEmail, setSignInEmail] = useState("");
+  const [signInPassword, setSignInPassword] = useState("");
+  const [invalidCredentials, setinvalidCredentials] = useState(false);
 
   const onSignInSubmit = () => {
     fetch("http://localhost:3000/signin", {
@@ -14,15 +15,19 @@ function SignIn({ onRouteChange, loadUser }) {
     })
       .then((response) => response.json())
       .then((user) => {
+        console.log(user);
         if (user.id) {
           loadUser(user);
           onRouteChange("Home");
+        } else {
+          setinvalidCredentials(true);
+          setSignInPassword("");
         }
       });
   };
 
   return (
-    <article className="br3 ba b--black-10 mv4 w-100 w-50-m w-40-l mw8 center  shadow-5">
+    <article className="br3 ba b--black-10 mv4 w-100 w-50-m w-40-l mw8 center shadow-5">
       <main className="pa4 black-80">
         <div className="measure">
           <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
@@ -32,6 +37,7 @@ function SignIn({ onRouteChange, loadUser }) {
                 Email
               </label>
               <input
+                value={signInEmail}
                 onChange={(event) => setSignInEmail(event.target.value)}
                 className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
                 type="email"
@@ -44,6 +50,7 @@ function SignIn({ onRouteChange, loadUser }) {
                 Password
               </label>
               <input
+                value={signInPassword}
                 onChange={(event) => setSignInPassword(event.target.value)}
                 className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
                 type="password"
@@ -53,6 +60,13 @@ function SignIn({ onRouteChange, loadUser }) {
             </div>
             <label className="pa0 ma0 lh-copy f6 pointer"></label>
           </fieldset>
+          {invalidCredentials ? (
+            <div>
+              <p className=" mt0 ph3 pv2 dark-red f5">
+                There was a problem logging in. Check email and password.
+              </p>
+            </div>
+          ) : null}
           <div>
             <input
               onClick={() => onSignInSubmit()}
