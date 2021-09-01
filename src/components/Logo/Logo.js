@@ -6,10 +6,10 @@ import facialRecognition from "./facial-recognition.gif";
 function Logo() {
   return (
     <div className="ee ma4 mt0">
-      <Tilty className="tilt br2 shadow-2 h4 w4" scale={1.1} max={55}>
+      <Tilty className="br2 h4 w4" scale={1.1} max={55}>
         <div>
           <img
-            className="centerImg logo"
+            className="centerImg logo shadow-5"
             src={facialRecognition}
             alt="facialRecognition"
           />
