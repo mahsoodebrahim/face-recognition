@@ -29,6 +29,8 @@ function App() {
     joined: "",
   });
 
+  console.log(isSignedIn);
+
   function loadUser(data) {
     setUser({
       id: data.id,
@@ -90,10 +92,29 @@ function App() {
     navigationRoute === "Home" ? setIsSignedIn(true) : setIsSignedIn(false);
   }
 
+  function signOut() {
+    setRoute("SignIn");
+    setIsSignedIn(false);
+    setUser({
+      id: "",
+      name: "",
+      email: "",
+      entries: 0,
+      joined: "",
+    });
+    setUrl("");
+    setImageToDetect("");
+    setFaceBorderBoxes([]);
+  }
+
   return (
     <div className="App">
       <Particles className="particles" params={particleOptions} />
-      <Navigation onRouteChange={onRouteChange} isSignedIn={isSignedIn} />
+      <Navigation
+        onRouteChange={onRouteChange}
+        isSignedIn={isSignedIn}
+        signOut={signOut}
+      />
       {route === "Home" ? (
         <>
           <Logo />
