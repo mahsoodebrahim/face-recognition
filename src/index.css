@@ -3,7 +3,7 @@ body {
   font-family: "Courier New", Courier, monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(to bottom right, #ff5edf 33%, #04c8db 100%) fixed;
+  background: linear-gradient(to bottom right, #3d7eaa 33%, #ffe47a 100%) fixed;
 }
 
 code {
