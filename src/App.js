@@ -8,12 +8,6 @@ import Logo from "./components/Logo/Logo";
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import Rank from "./components/Rank/Rank";
 import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
-import Clarifai from "clarifai";
-
-//You must add your own API key here from Clarifai.
-const app = new Clarifai.App({
-  apiKey: "fbd8583e4a0945ac9ab52c8fbf7018f0",
-});
 
 function App() {
   const [url, setUrl] = useState("");
@@ -63,9 +57,18 @@ function App() {
   function onPictureSubmit() {
     setFaceBorderBoxes([]); // reset all the boundary boxes
     setImageToDetect(url); // set image url as image to detect for the FaceRecognition component
-    app.models
-      .predict(Clarifai.FACE_DETECT_MODEL, url)
-      .then((response) => {
+    fetch("http://localhost:3000/imageAPI", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        url: url,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Update the userEntriesCount
         fetch("http://localhost:3000/image", {
           method: "PUT",
           headers: {
@@ -80,7 +83,7 @@ function App() {
             loadUser({ ...user, entries: userEntriesCount });
           });
 
-        drawFacialBorderBox(calculateFaceCoordinates(response));
+        drawFacialBorderBox(calculateFaceCoordinates(data));
       })
       .catch((err) => console.log(err));
   }
