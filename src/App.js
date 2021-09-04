@@ -29,8 +29,6 @@ function App() {
     joined: "",
   });
 
-  console.log(isSignedIn);
-
   function loadUser(data) {
     setUser({
       id: data.id,
